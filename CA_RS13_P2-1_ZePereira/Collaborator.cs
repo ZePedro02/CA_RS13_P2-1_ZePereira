@@ -6,23 +6,21 @@ using System.Threading.Tasks;
 
 namespace CA_RS13_P2_1_ZePereira
 {
-    class Colaborator : IPerson
+    class Collaborator : Person
     {
         #region Properties
-        public string Username { get; set; }
-        public string Password { get; set; }
+       
         #endregion
 
         #region Constructors
         //Apenas se pode criar um colaborador se já houver username e password
-        Colaborator(string username, string password)
-        {
-            Username = username;
-            Password = password;
-        }
+        public Collaborator(string username, string password) :base(username, password) { }
+
         #endregion
 
         #region Methods
+        public override string GetRole() => "Collaborator";
+        
         //------------------
         //Aadicionar férias-
         //------------------
@@ -49,6 +47,6 @@ namespace CA_RS13_P2_1_ZePereira
         //-Consulta férias negadas-
         //-----------------
         #endregion
-        
+
     }
 }

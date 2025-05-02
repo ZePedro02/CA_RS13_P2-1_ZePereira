@@ -6,23 +6,19 @@ using System.Threading.Tasks;
 
 namespace CA_RS13_P2_1_ZePereira
 {
-    class Admin : IPerson
+    class Admin : Person
     {
         #region Properties
-        public string Username { get; set; }
-        public string Password { get; set; }
+
         #endregion
 
         #region Constructors
         //Apenas se pode criar um colaborador se já houver username e password
-        Admin(string username, string password)
-        {
-            Username = username;
-            Password = password;
-        }
+        public Admin(string username, string password) : base(username, password) { }
         #endregion
 
         #region Methods
+        public override string GetRole() => "Admin";
         //------------------
         //Aadicionar férias-
         //------------------
