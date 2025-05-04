@@ -89,7 +89,7 @@ namespace D00_Utility
               }
           }
         */
-        public int ValidateInt(string text)
+        public static int ValidateInt(string text)
         {
             int id;
             while (true)
@@ -102,13 +102,12 @@ namespace D00_Utility
                 }
                 else
                 {
-                    WriteErrorMessage("IS tem de ser número inteiro!", "\n","\n");
-                    WriteMessage($"{text} : ", "");
+                    WriteErrorMessage("Insira um número inteiro!", "\n","\n");
                 }
 
             }
         }
-        public DateTime ValidateDate(string text)
+        public static DateTime ValidateDate(string text)
         {
             DateTime Date;
             while (true)
@@ -122,10 +121,34 @@ namespace D00_Utility
                 else
                 {
                     WriteErrorMessage("Formato de data incorreto! (dd/mm/yyyy)", "\n","\n");
-                    WriteMessage($"{text} : ", "");
                 }
 
             }
+        }
+        public static string ReadPassword()
+        {
+            string password = "";
+            ConsoleKeyInfo key;
+
+            do
+            {
+                key = Console.ReadKey(intercept: true);
+
+                if (key.Key == ConsoleKey.Backspace && password.Length > 0)
+                {
+
+                    password = password.Substring(0, password.Length - 1);
+                    Console.Write("\b \b");
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    password += key.KeyChar;
+                    Console.Write("*");
+                }
+            }
+            while (key.Key != ConsoleKey.Enter);
+
+            return password;
         }
     }
 }

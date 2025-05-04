@@ -11,45 +11,26 @@ namespace CA_RS13_P2_1_ZePereira
         static void Main(string[] args)
         {
             Utility.SetUniCode();
-            Utility.WriteTitle("Login","","");
-            
-            var loginService = new LoginService();
             VacationService vacationService = new VacationService();
-            Person loggedPerson = null;
+            LoginService loginService = new LoginService();
+            ProfileService profileService = new ProfileService(loginService.GetPeople());
 
-            while (loggedPerson == null)
+            Menu menu = new Menu(vacationService, loginService, profileService);
+            //Person loggedPerson = menu.ShowLoginMenu();
+
+            //menu.ShowMainMenu(loggedPerson);
+
+            while (true)
             {
-                Utility.WriteMessage("Username: ");
-                string username = Console.ReadLine();
+                Person loggedPerson = menu.ShowLoginMenu();
+
+                menu.ShowMainMenu(loggedPerson);
+            } 
 
 
-                Utility.WriteMessage("Password: ");
-                string password = Console.ReadLine();
 
-                loggedPerson = loginService.Authentication(username, password);
-
-
-                if (loggedPerson == null)
-                {
-                    Utility.WriteErrorMessage("Utilizador inválido, tente novamente.","","\n\n");
-                }
-            }
-            Utility.WriteInfoMessage($"Loggin efetuado com sucesso! Bem-vindo {loggedPerson.Username}","\n");
-
-          
-            /*        ADICIONAR FÉRIAS
-                Utility.WriteTitle("Adioconar férias");
-
-                Utility.WriteMessage("Insira a data de início das férias: ");
-                DateTime beginDate = Convert.ToDateTime(Console.ReadLine());
-
-
-                Utility.WriteMessage("Insira a data de fim das férias: ");
-                DateTime endDate = Convert.ToDateTime(Console.ReadLine());
-
-
-                vacationService.AddVacation(beginDate, endDate, loggedPerson.Username);
-            */
+            //    vacationService.ListVacation(loggedPerson.Username);
+            
             Utility.TerminateConsole();
         }
     }

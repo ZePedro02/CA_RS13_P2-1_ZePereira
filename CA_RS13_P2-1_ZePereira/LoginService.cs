@@ -29,5 +29,10 @@ namespace CA_RS13_P2_1_ZePereira
 
         }
 
+        public List<Person> GetPeople()
+        {
+            return persons;
+        }
+       
     }
 }
