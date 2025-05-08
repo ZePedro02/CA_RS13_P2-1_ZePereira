@@ -27,20 +27,19 @@ namespace CA_RS13_P2_1_ZePereira
         #endregion
 
         #region Methods
+
         public Person ShowLoginMenu()
         {
             Utility.WriteTitle("Login", "", "");
-
+            Utility.WriteInfoMessage("Se pretende sair prima 'ESC'","","\n");
             Person loggedPerson = null;
 
             while (loggedPerson == null)
             {
-                Utility.WriteMessage("Username: ");
-                string username = Console.ReadLine();
 
-
-                Utility.WriteMessage("Password: ");
-                string password = Utility.ReadPassword();
+                string username = Utility.EscExitLogginForm("Username: ");
+               
+                string password = Utility.EscExitLogginForm("Password: ");
 
                 loggedPerson = _loginService.Authentication(username, password);
 
@@ -54,13 +53,14 @@ namespace CA_RS13_P2_1_ZePereira
             return loggedPerson;
         }
 
+      
+
         public void ShowMainMenu(Person loggedPerson)
         {
             string role = loggedPerson.GetRole();
-
+            bool exit = false;
             if (role == "Collaborator")
             {
-                bool exit = false;
                 while (!exit)
                 {
                     ShowCollabMainMenu();
@@ -69,7 +69,12 @@ namespace CA_RS13_P2_1_ZePereira
             }
             else
             {
-                ShowAdminMainMenu();
+                while (!exit)
+                {
+                    ShowAdminMainMenu();
+                    exit = MenuAdminbHandler(loggedPerson);
+                }
+                
 
             }
         }
@@ -122,6 +127,8 @@ namespace CA_RS13_P2_1_ZePereira
                     return false;
             }
         }
+        
+
 
         private void EditProfileMenu(Person loggedPerson)
         {
@@ -163,6 +170,21 @@ namespace CA_RS13_P2_1_ZePereira
             }
 
         }
+
+        public static void MenuAdminHandler()
+        {
+            int input = Utility.ValidateInt("opção pretendida");
+            switch (input)
+            {
+                case 4:
+
+                 //   _vacationsServices.ValidateVacations
+                    break;
+            }
+
+
+        }
+
         public static void ShowAdminMainMenu()
         {
             Utility.WriteInfoMessage("1. Adicionar férias", "", "\n");

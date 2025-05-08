@@ -90,20 +90,26 @@ namespace CA_RS13_P2_1_ZePereira
                 .OrderBy(v => v.BeginDate)
                 .ToList();
 
-            if (!CheckIfThereAreVacationsAvailable(username, personVacation))
+            if (!CheckIfThereAreVacationsAvailable(personVacation))
                 return personVacation;
-            
-            Utility.WriteInfoMessage($"{"Username",-5} - {"Begin Date",-5} - {"End Date", -5}  ", "\n", "\n\n");
-           
 
-            for (int i = 0 ; i < personVacation.Count; i++)
-            {
-                Utility.WriteMessage($"{i+1}. {personVacation[i].Username,-5} {personVacation[i].BeginDate.ToShortDateString(),-5} {personVacation[i].EndDate.ToShortDateString()}", "", "\n");
-
-            }
+            WriteListToConsole(personVacation);
 
             return personVacation;
         }
+
+        private static void WriteListToConsole(List<Vacation> personVacation)
+        {
+            Utility.WriteInfoMessage($"{"Username",-5} - {"Begin Date",-5} - {"End Date",-5}  ", "\n", "\n\n");
+
+
+            for (int i = 0; i < personVacation.Count; i++)
+            {
+                Utility.WriteMessage($"{i + 1}. {personVacation[i].Username,-5} {personVacation[i].BeginDate.ToShortDateString(),-5} {personVacation[i].EndDate.ToShortDateString()}", "", "\n");
+
+            }
+        }
+
         public void ConsultVacations(DateTime beginDate, DateTime endDate, string username)
         {
             var personVacation = vacations
@@ -111,7 +117,7 @@ namespace CA_RS13_P2_1_ZePereira
                 .OrderBy(v => v.BeginDate)
                 .ToList();
             
-            if (!CheckIfThereAreVacationsAvailable(username, personVacation))
+            if (!CheckIfThereAreVacationsAvailable(personVacation))
                 return;
             
             Utility.WriteInfoMessage($"{"Username",-5} - {"Begin Date",-5} - {"End Date", -5}  ", "\n", "\n\n");
@@ -135,40 +141,82 @@ namespace CA_RS13_P2_1_ZePereira
         }
 
         public void UpdateVacation(string username)
-        { 
+        {
             var vacationsAfterToday = ListAllVacation(username);
 
-            int input = Utility.ValidateInt("o índice que pretende editar");
-            if (input > vacationsAfterToday.Count + 1 || input < 1)
-            {
-                Utility.WriteErrorMessage("O valor que inseriu não é uma opção da lista");
-                return;
-            }
-            
-            DateTime newBeginDate  = Utility.ValidateDate(" a nova data de início das férias");
+            int input= ReadListOption(vacationsAfterToday);
+
+            DateTime newBeginDate = Utility.ValidateDate(" a nova data de início das férias");
             DateTime newEndDate = Utility.ValidateDate(" a nova data de fim das férias");
 
             if (IsVacationOverlap(vacationsAfterToday, newBeginDate, newEndDate, username))
             {
-                Utility.WriteErrorMessage("O utilizador já tem férias marcadas nessa data!","\n\n");
+                Utility.WriteErrorMessage("O utilizador já tem férias marcadas nessa data!", "\n\n");
                 return;
             }
 
             vacationsAfterToday[input - 1].BeginDate = newBeginDate;
             vacationsAfterToday[input - 1].BeginDate = newEndDate;
+            vacationsAfterToday[input - 1].State = VacationState.Pending;
 
             Utility.WriteMessage("As datas foram aletradas com sucesso!");
 
         }
 
-        public bool CheckIfThereAreVacationsAvailable(string loggedPerson, List<Vacation> vacations)
+        private static int ReadListOption(List<Vacation> vacationsAfterToday)
+        {
+            var input = Utility.ValidateInt("o índice que pretende editar");
+            if (input > vacationsAfterToday.Count + 1 || input < 1)
+            {
+                Utility.WriteErrorMessage("O valor que inseriu não é uma opção da lista");              
+            }
+            return input;
+        }
+
+        public bool CheckIfThereAreVacationsAvailable(List<Vacation> vacations)
         {
             if (vacations.Count == 0)
             {
-                Utility.WriteInfoMessage($"Não há férias marcadas para o futuro para o utilizador {loggedPerson}.");
+                Utility.WriteInfoMessage($"Não há férias marcadas para o futuro.");
                 return false;
             }
             return true;
         }
+
+        public void ValidateVacationsAdmin(List<Person> persons)
+        {
+            var usernames = persons
+                .Select(v => v.Username)
+                .ToList();
+            
+            var pendingVacations = vacations
+                .Where(j => j.State == VacationState.Pending && usernames.Contains(j.Username))
+                .ToList();
+
+            if (!CheckIfThereAreVacationsAvailable(pendingVacations))
+                return;
+
+            WriteListToConsole(pendingVacations);
+
+            int inputIndex = ReadListOption(pendingVacations);
+
+            int inputOption = Utility.ValidateInt(" a opção que pretende\n\n1. Aprovar\n2. Rejeitar\n3. Cancelar\n");
+
+            switch (inputOption)
+            {
+                case 1:
+                    pendingVacations[inputIndex - 1].State = VacationState.Approved;
+                    Utility.WriteInfoMessage("Férias aprovadas!");
+                    break;
+                case 2:
+                    pendingVacations[inputIndex - 1].State = VacationState.Rejected;
+                    Utility.WriteInfoMessage("Férias rejeitadas!");
+                    break;
+                default:
+                    Utility.WriteInfoMessage("Operação cancelada");
+                    break;
+            }
+            }
+
     }
 }

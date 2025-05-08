@@ -150,5 +150,19 @@ namespace D00_Utility
 
             return password;
         }
+
+        public static string EscExitLogginForm(string option)
+        {
+            Utility.WriteInfoMessage(option, "", "\n");
+
+            ConsoleKeyInfo key = Console.ReadKey(intercept: true);
+
+            if (key.Key == ConsoleKey.Escape)
+                Environment.Exit(0);
+            
+            Console.Write(key.KeyChar);
+
+            return key.KeyChar + Console.ReadLine();
+        }
     }
 }
