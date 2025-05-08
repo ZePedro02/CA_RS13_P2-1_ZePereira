@@ -40,7 +40,6 @@ namespace CA_RS13_P2_1_ZePereira
             { 
                 Utility.WriteInfoMessage($"Username alterado de {loggedPerson.Username} para {newUsername}!", "\n", "\n");
                 
-//TODO
                 loggedPerson.Username = newUsername;
                 
                 return true;
