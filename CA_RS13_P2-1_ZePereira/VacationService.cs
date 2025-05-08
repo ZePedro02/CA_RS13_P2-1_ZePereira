@@ -83,20 +83,37 @@ namespace CA_RS13_P2_1_ZePereira
 
         }
 
-        public void ListAllVacation(string username)
+        public List<Vacation> ListAllVacation(string username)
         {
+            var personVacation = vacations
+                .Where(v => v.Username == username && v.BeginDate > DateTime.Today)
+                .OrderBy(v => v.BeginDate)
+                .ToList();
 
-            var personVacation = vacations.OrderBy(v => v.BeginDate).ToList();
+            if (!CheckIfThereAreVacationsAvailable(username, personVacation))
+                return personVacation;
+            
             Utility.WriteInfoMessage($"{"Username",-5} - {"Begin Date",-5} - {"End Date", -5}  ", "\n", "\n\n");
-            foreach (var vacation in personVacation)
+           
+
+            for (int i = 0 ; i < personVacation.Count; i++)
             {
-                Utility.WriteMessage($"{vacation.Username, -5} {vacation.BeginDate.ToShortDateString(),-5} {vacation.EndDate.ToShortDateString()}", "", "\n");
+                Utility.WriteMessage($"{i+1}. {personVacation[i].Username,-5} {personVacation[i].BeginDate.ToShortDateString(),-5} {personVacation[i].EndDate.ToShortDateString()}", "", "\n");
+
             }
 
+            return personVacation;
         }
         public void ConsultVacations(DateTime beginDate, DateTime endDate, string username)
-        { 
-            var personVacation = vacations.Where(v => v.BeginDate >=beginDate && v.EndDate <= endDate && v.Username == username).OrderBy(v => v.BeginDate).ToList();
+        {
+            var personVacation = vacations
+                .Where(v => v.BeginDate >= beginDate && v.EndDate <= endDate && v.Username == username)
+                .OrderBy(v => v.BeginDate)
+                .ToList();
+            
+            if (!CheckIfThereAreVacationsAvailable(username, personVacation))
+                return;
+            
             Utility.WriteInfoMessage($"{"Username",-5} - {"Begin Date",-5} - {"End Date", -5}  ", "\n", "\n\n");
             foreach (var vacation in personVacation)
             {
@@ -106,7 +123,10 @@ namespace CA_RS13_P2_1_ZePereira
 
         public void UpdateVacationsWithNewUserName(string oldUsername, string newUserName)
         { 
-            var oldUserVacations = vacations.Where(v => v.Username == oldUsername).ToList();
+            var oldUserVacations = vacations
+                .Where(v => v.Username == oldUsername)
+                .ToList();
+
             foreach (var vacation in oldUserVacations)
                 vacation.Username = newUserName;
 
@@ -114,8 +134,41 @@ namespace CA_RS13_P2_1_ZePereira
         
         }
 
+        public void UpdateVacation(string username)
+        { 
+            var vacationsAfterToday = ListAllVacation(username);
 
+            int input = Utility.ValidateInt("o índice que pretende editar");
+            if (input > vacationsAfterToday.Count + 1 || input < 1)
+            {
+                Utility.WriteErrorMessage("O valor que inseriu não é uma opção da lista");
+                return;
+            }
+            
+            DateTime newBeginDate  = Utility.ValidateDate(" a nova data de início das férias");
+            DateTime newEndDate = Utility.ValidateDate(" a nova data de fim das férias");
 
+            if (IsVacationOverlap(vacationsAfterToday, newBeginDate, newEndDate, username))
+            {
+                Utility.WriteErrorMessage("O utilizador já tem férias marcadas nessa data!","\n\n");
+                return;
+            }
 
+            vacationsAfterToday[input - 1].BeginDate = newBeginDate;
+            vacationsAfterToday[input - 1].BeginDate = newEndDate;
+
+            Utility.WriteMessage("As datas foram aletradas com sucesso!");
+
+        }
+
+        public bool CheckIfThereAreVacationsAvailable(string loggedPerson, List<Vacation> vacations)
+        {
+            if (vacations.Count == 0)
+            {
+                Utility.WriteInfoMessage($"Não há férias marcadas para o futuro para o utilizador {loggedPerson}.");
+                return false;
+            }
+            return true;
+        }
     }
 }

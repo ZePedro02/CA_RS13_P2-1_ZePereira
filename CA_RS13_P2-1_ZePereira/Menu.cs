@@ -107,7 +107,7 @@ namespace CA_RS13_P2_1_ZePereira
                     return false;
                 case 4:
                     //Editar
-                    Utility.TerminateConsole();
+                    _vacationService.UpdateVacation(loggedPerson.Username);
                     return false;
                 case 5:
                     //Editar perfil
