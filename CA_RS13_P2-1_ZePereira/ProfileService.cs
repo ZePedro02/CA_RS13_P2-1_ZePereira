@@ -51,6 +51,9 @@ namespace CA_RS13_P2_1_ZePereira
                 loggedPerson.Password = newPassword;
                 return true;           
         }
+
+
+
         #endregion
 
     }

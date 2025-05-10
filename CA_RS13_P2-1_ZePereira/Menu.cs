@@ -72,7 +72,7 @@ namespace CA_RS13_P2_1_ZePereira
                 while (!exit)
                 {
                     ShowAdminMainMenu();
-                    exit = MenuAdminbHandler(loggedPerson);
+                    exit = MenuAdminHandler();
                 }
                 
 
@@ -171,15 +171,127 @@ namespace CA_RS13_P2_1_ZePereira
 
         }
 
-        public static void MenuAdminHandler()
+        public  bool MenuAdminHandler()
         {
-            int input = Utility.ValidateInt("opção pretendida");
+            int input = Utility.ValidateInt(" a opção pretendida");
             switch (input)
             {
-                case 4:
+                case 1:
+                    //adicionar férias
 
-                 //   _vacationsServices.ValidateVacations
-                    break;
+                    Utility.WriteTitle("Adicionar férias");
+
+                    Utility.WriteMessage("Utilizador: ");
+                    string usernameAddVacation = Console.ReadLine();
+                    if (_profileService.IsUserNameInUse(usernameAddVacation))
+                    {
+                        DateTime beginDate = Utility.ValidateDate("data de início das férias");
+
+                        DateTime endDate = Utility.ValidateDate("data de fim das férias");
+
+                        _vacationService.AddVacation(beginDate, endDate, usernameAddVacation);
+                    }
+                    else
+                    {
+                        Utility.WriteErrorMessage("O utilizador não existe.", "\n", "\n");
+                    }
+                    Console.Clear();
+                    return false;
+                case 2:
+                    //consultar férias
+                    Utility.WriteMessage("Utilizador: ");
+                    string usernameSerachVacation = Console.ReadLine();
+                    if (_profileService.IsUserNameInUse(usernameSerachVacation))
+                    { 
+                        DateTime beginDateConsult = Utility.ValidateDate("Data de: ");
+
+                        DateTime endDateConsult = Utility.ValidateDate("Até: ");
+
+                        _vacationService.ConsultVacations(beginDateConsult, endDateConsult, usernameSerachVacation);
+                    }
+                    else
+                    {
+                        Utility.WriteErrorMessage("O utilizador não existe.", "\n", "\n");
+                    }
+                    Console.Clear();
+                    return false;
+
+                case 3:
+                    //listar férias
+                    _vacationService.ListVacationAdmin();
+                    return false;
+                case 4:
+                    //editar férias
+                    Utility.WriteMessage("Utilizador: ");
+                    string usernameEditVacation = Console.ReadLine();
+
+                    if (_profileService.IsUserNameInUse(usernameEditVacation))
+                    {
+                        _vacationService.UpdateVacation(usernameEditVacation);
+                    }
+                    else
+                    {
+                        Utility.WriteErrorMessage("O utilizador não existe.", "\n", "\n");
+                    }
+
+                    Console.Clear();
+                    return false;
+                case 5:
+                    //adicionar pessoa
+                    Utility.WriteMessage("Utilizador: ");
+                    string usernameCreateUser = Console.ReadLine();
+
+                    if (!_profileService.IsUserNameInUse(usernameCreateUser))
+                    {
+                        int inputCreateUser = Utility.ValidateInt(" a opção que pretende adicionar:\n1. Colaborador(a)\n2. Aministrador(a)");
+                        if (inputCreateUser < 1 || inputCreateUser > 2) Utility.WriteErrorMessage("Não inseriu uma opção válida");
+                        else
+                        {
+                            string role = string.Empty;
+                            if (inputCreateUser == 1) role = "Collaborator";
+                            if (inputCreateUser == 2) role = "Admin";
+                            string newUserPassword = Utility.ReadPassword();
+                            _loginService.CreateUser(usernameCreateUser, newUserPassword,role);
+                        }
+                    }
+                    else
+                    {
+                        Utility.WriteErrorMessage("O utilizador Já existe.", "\n", "\n");
+                    }
+
+                    Console.Clear();
+                    return false;
+                case 6:
+                    
+                    //editar pessoa
+
+                    Utility.WriteMessage("Utilizador: ");
+                    string usernameEditProfile = Console.ReadLine();
+
+                    if (_profileService.IsUserNameInUse(usernameEditProfile))
+                    {
+                        var userList = _loginService.GetPeople();
+                        foreach(var person in userList) 
+
+                            if (person.Username == usernameEditProfile)
+                                EditProfileMenu(person);
+
+                    }
+                    else
+                    {
+                        Utility.WriteErrorMessage("O utilizador não existe.", "\n", "\n");
+                    }
+
+                    Console.Clear();
+                    return false;
+                case 7:
+                    //logout
+                    Utility.WriteInfoMessage("Logout bem-sucedido!\nPrima qualquer tecla para voltar ao menu anterior.");
+                    Console.ReadKey();
+                    Console.Clear();
+                    return true;
+                default: 
+                    return true;
             }
 
 
@@ -191,10 +303,9 @@ namespace CA_RS13_P2_1_ZePereira
             Utility.WriteInfoMessage("2. Consultar férias", "", "\n");
             Utility.WriteInfoMessage("3. Listar férias", "", "\n");
             Utility.WriteInfoMessage("4. Editar férias", "", "\n");
-            Utility.WriteInfoMessage("5. Aprovar férias", "", "\n");
-            Utility.WriteInfoMessage("6. Ádicionar pessoa", "", "\n");
-            Utility.WriteInfoMessage("7. Editar pessoa", "", "\n");
-            Utility.WriteInfoMessage("8. Logout", "", "\n");
+            Utility.WriteInfoMessage("5. Ádicionar pessoa", "", "\n");
+            Utility.WriteInfoMessage("6. Editar pessoa", "", "\n");
+            Utility.WriteInfoMessage("7. Logout", "", "\n");
         }
 
         public static void ShowCollabMainMenu()

@@ -34,5 +34,15 @@ namespace CA_RS13_P2_1_ZePereira
             return persons;
         }
        
+
+        public void CreateUser(string username, string password, string role)
+        {
+
+            if (role == "Collaborator")  persons.Add(new Collaborator(username, password));
+            if (role =="Admin") persons.Add(new Admin(username, password));
+
+        }
+
+
     }
 }

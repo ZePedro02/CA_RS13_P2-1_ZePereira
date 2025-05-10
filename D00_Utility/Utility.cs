@@ -164,5 +164,6 @@ namespace D00_Utility
 
             return key.KeyChar + Console.ReadLine();
         }
+        
     }
 }

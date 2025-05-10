@@ -21,31 +21,7 @@ namespace CA_RS13_P2_1_ZePereira
         #region Methods
         public override string GetRole() => "Collaborator";
         
-        //------------------
-        //Aadicionar férias-
-        //------------------
-        //---------------
-        //-Listar férias-
-        //----------------
-
-        //---------------
-        //-Editar férias-
-        //---------------
-
-        //-----------------
-        //-Consulta férias-
-        //-----------------
-        //-----------------
-        //-Consulta férias por aprovar-
-        //-----------------
-
-        //-----------------
-        //-Consulta férias aprovadasa-
-        //-----------------
-
-        //-----------------
-        //-Consulta férias negadas-
-        //-----------------
+      
         #endregion
 
     }

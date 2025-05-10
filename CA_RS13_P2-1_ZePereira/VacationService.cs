@@ -10,7 +10,7 @@ namespace CA_RS13_P2_1_ZePereira
     {
 
         private List<Vacation> vacations = new List<Vacation>();
-        
+
         public bool AddVacation(DateTime beginDate, DateTime endDate, string username)
         {
             if (!IsEndDateAfterBeginDate(endDate, beginDate))
@@ -32,7 +32,7 @@ namespace CA_RS13_P2_1_ZePereira
             }
 
             vacations.Add(new Vacation(beginDate, endDate, username));
-                Utility.WriteMessage("Pedido adicionado com sucesso!", "\n", "\n\n\n"); 
+            Utility.WriteMessage("Pedido adicionado com sucesso!", "\n", "\n\n\n");
             return true;
         }
 
@@ -74,11 +74,28 @@ namespace CA_RS13_P2_1_ZePereira
         public void ListVacation(string username)
         {
 
-            var personVacation = vacations.Where(v => v.Username == username).OrderBy(v => v.BeginDate).ToList();
-            Utility.WriteInfoMessage($"{"Begin Date", -5} - End Date","\n","\n\n");
+            var personVacation = vacations
+                .Where(v => v.Username == username)
+                .OrderBy(v => v.BeginDate)
+                .ToList();
+            Utility.WriteInfoMessage($"{"Begin Date",-5} - End Date", "\n", "\n\n");
             foreach (var vacation in personVacation)
             {
-                Utility.WriteMessage($"{vacation.BeginDate.ToShortDateString(), -5} {vacation.EndDate.ToShortDateString()}", "","\n");
+                Utility.WriteMessage($"{vacation.BeginDate.ToShortDateString(),-5} {vacation.EndDate.ToShortDateString()}", "", "\n");
+            }
+
+        }
+
+        public void ListVacationAdmin()
+        {
+
+            var personVacation = vacations
+                .OrderBy(v => v.Username)
+                .ToList();
+            Utility.WriteInfoMessage($"{"Begin Date",-5} - End Date", "\n", "\n\n");
+            foreach (var vacation in personVacation)
+            {
+                Utility.WriteMessage($"{vacation.BeginDate.ToShortDateString(),-5} {vacation.EndDate.ToShortDateString()}", "", "\n");
             }
 
         }
@@ -116,19 +133,19 @@ namespace CA_RS13_P2_1_ZePereira
                 .Where(v => v.BeginDate >= beginDate && v.EndDate <= endDate && v.Username == username)
                 .OrderBy(v => v.BeginDate)
                 .ToList();
-            
+
             if (!CheckIfThereAreVacationsAvailable(personVacation))
                 return;
-            
-            Utility.WriteInfoMessage($"{"Username",-5} - {"Begin Date",-5} - {"End Date", -5}  ", "\n", "\n\n");
+
+            Utility.WriteInfoMessage($"{"Username",-5} - {"Begin Date",-5} - {"End Date",-5}  ", "\n", "\n\n");
             foreach (var vacation in personVacation)
             {
-                Utility.WriteMessage($"{vacation.Username, -5} {vacation.BeginDate.ToShortDateString(),-5} {vacation.EndDate.ToShortDateString()}", "", "\n");
+                Utility.WriteMessage($"{vacation.Username,-5} {vacation.BeginDate.ToShortDateString(),-5} {vacation.EndDate.ToShortDateString()}", "", "\n");
             }
         }
 
         public void UpdateVacationsWithNewUserName(string oldUsername, string newUserName)
-        { 
+        {
             var oldUserVacations = vacations
                 .Where(v => v.Username == oldUsername)
                 .ToList();
@@ -136,15 +153,15 @@ namespace CA_RS13_P2_1_ZePereira
             foreach (var vacation in oldUserVacations)
                 vacation.Username = newUserName;
 
-            Utility.WriteInfoMessage($"Foram alterados {oldUserVacations.Count} registos!","\n");
-        
+            Utility.WriteInfoMessage($"Foram alterados {oldUserVacations.Count} registos!", "\n");
+
         }
 
         public void UpdateVacation(string username)
         {
             var vacationsAfterToday = ListAllVacation(username);
 
-            int input= ReadListOption(vacationsAfterToday);
+            int input = ReadListOption(vacationsAfterToday);
 
             DateTime newBeginDate = Utility.ValidateDate(" a nova data de início das férias");
             DateTime newEndDate = Utility.ValidateDate(" a nova data de fim das férias");
@@ -168,7 +185,7 @@ namespace CA_RS13_P2_1_ZePereira
             var input = Utility.ValidateInt("o índice que pretende editar");
             if (input > vacationsAfterToday.Count + 1 || input < 1)
             {
-                Utility.WriteErrorMessage("O valor que inseriu não é uma opção da lista");              
+                Utility.WriteErrorMessage("O valor que inseriu não é uma opção da lista");
             }
             return input;
         }
@@ -182,15 +199,50 @@ namespace CA_RS13_P2_1_ZePereira
             }
             return true;
         }
-
-        public void ValidateVacationsAdmin(List<Person> persons)
+        /*
+        
+        public void ListPersonsWithPendingVacations(List<Vacation> vacations)
         {
-            var usernames = persons
-                .Select(v => v.Username)
-                .ToList();
+            var personWithPendingVacations = vacations.Where(v => v.State == VacationState.Pending).ToList();
+            var usernamesWithPendingVacation = personWithPendingVacations.Select(j => j.Username).ToList();
+
+            for (int i = 0; i < usernamesWithPendingVacation.Count; i++)
+            {
+                Utility.WriteMessage($"{i + 1}. {usernamesWithPendingVacation[i]}", "", "\n");
+
+            }
+
+        }
+       
+        public List<Person> ChoosePersonsWithPendingVacations()
+        {
+            Utility.WriteMessage("Escolha o index das pessoas que pretende aprovar férias.\nPara sair prima Esc");
+            string exit = string.Empty;
+            do
+                 exit = EscExitPersoNlIST("Usename: ");
+            while (!(exit == "Vamos lá sair deste método"));
+        }
+        public static string EscExitPersoNlIST(string option)
+        {
+            Utility.WriteInfoMessage(option, "", "\n");
+
+            ConsoleKeyInfo key = Console.ReadKey(intercept: true);
+
+            if (key.Key == ConsoleKey.Escape)
+            {
+                return "Vamos lá sair deste método";
+            }
+            Console.Write(key.KeyChar);
+
+            return key.KeyChar + Console.ReadLine();
+        }
+        */
+        public void ValidateVacationsAdmin(string username)
+        {
+          
             
             var pendingVacations = vacations
-                .Where(j => j.State == VacationState.Pending && usernames.Contains(j.Username))
+                .Where(j => j.State == VacationState.Pending && username == j.Username)
                 .ToList();
 
             if (!CheckIfThereAreVacationsAvailable(pendingVacations))
@@ -219,4 +271,5 @@ namespace CA_RS13_P2_1_ZePereira
             }
 
     }
-}
+    }
+
